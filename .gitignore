@@ -1,0 +1,13 @@
+bin
+build
+data
+node_modules
+.devcontainer
+.devhints.md
+.vscode
+osdependencies
+scripts
+.git
+package-lock.json
+README.md
+tsconfig.tsbuildinfo
