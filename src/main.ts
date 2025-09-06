@@ -11,7 +11,7 @@ import { ModelDaemon } from "./modules/ModelDaemon";
     } catch {}
 
     await CockroachDaemon.init("single");
-
+    await new Promise(resolve => setTimeout(resolve, 3000));
     await ModelDaemon.init();
     
 })();

@@ -7,46 +7,26 @@ export class ModelDaemon extends Daemon {
 
     private static singleton: ModelDaemon;
 
-    private cockroachAdmin?: pg.Client;
-    private cockroachClient?: pg.Pool;
+    private cockroachAdmin: pg.Pool;
+    private cockroachClient: pg.Pool;
 
-    private constructor() {
+    public static async init(): Promise<ModelDaemon> {
 
-        super();
+        if (this.singleton)
+            return this.singleton;
 
         // - Create accessors for the static properties
         // - implementing a local scoped class
         class ModelAccess extends Model {
-            static getRefAdmin = () => Model.cockroachAdmin;
-            static getRefClient = () => Model.cockroachClient;
-            protected override save(): void {throw new Error('Method not implemented.');}
+            static getRefInit = Model.init;
+            protected override save(): void { throw new Error('You should not be there :/'); }
         }
-        this.cockroachAdmin = ModelAccess.getRefAdmin();
-        this.cockroachClient = ModelAccess.getRefClient();
 
-        this.setup();
-
-    }
-
-    public static async init(): Promise<ModelDaemon> {
-
-        if (ModelDaemon.singleton)
-            return ModelDaemon.singleton;
-        const instance = new this();
-        await instance.setup();
-        return instance;
-
-    }
-
-
-    private async setup(): Promise<void> {
-
-        // - Initialize the CockroachDB client connections
-        this.cockroachAdmin = new pg.Client({
+        const admin = new pg.Pool({
             host: `localhost`,
             port: 26257,
             user: `root`,
-            database: `system`,
+            database: `defaultdb`,
             ssl: {
                 ca: readFileSync('data/cockroach-certs/ca.crt').toString(),
                 cert: readFileSync('data/cockroach-certs/client.root.crt').toString(),
@@ -54,9 +34,27 @@ export class ModelDaemon extends Daemon {
             },
         });
 
-        this.cockroachClient;
-        this.cockroachAdmin;
+        const client = admin; // ! Temporary for development
 
+        await admin.connect();
+        // await client.connect(); // ! Temporary for development
+
+        await ModelAccess.getRefInit(admin, client);
+
+        this.singleton = new this(admin, client);
+        return this.singleton;
+
+    }
+
+    private constructor(
+        admin: pg.Pool,
+        client: pg.Pool
+    ) {
+        super();
+        this.cockroachAdmin = admin;
+        this.cockroachClient = client;
+        this.cockroachAdmin; // ! To avoid the unused variable warning
+        this.cockroachClient; // ! To avoid the unused variable warning
     }
 
     protected info(message: string): void {

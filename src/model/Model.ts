@@ -1,4 +1,4 @@
-import { Client, Pool } from 'pg';
+import { Pool } from 'pg';
 import { CredentialsDeamon } from '../CredentialsDaemon';
 
 /**
@@ -8,11 +8,11 @@ import { CredentialsDeamon } from '../CredentialsDaemon';
 
 export abstract class Model {
 
-    protected static cockroachAdmin: Client;
+    protected static cockroachAdmin: Pool;
 
     protected static cockroachClient: Pool;
 
-    protected static async init(admin: Client, client: Pool): Promise<void> {
+    protected static async init(admin: Pool, client: Pool): Promise<void> {
 
         if (this.cockroachAdmin || this.cockroachClient)
             throw new Error(`Model is already initialized!`);
@@ -38,17 +38,21 @@ export abstract class Model {
 
         }
 
-        // TODO
-        this.cockroachClient.query(`
-            CREATE TABLE public.anyuser (
+        // ! TMP
+        // ! For now we use the admin client as the main client
+        await this.cockroachAdmin.query(`USE "AnyThing";`);
+        // ! TMP
+
+        await this.cockroachClient.query(`
+            CREATE TABLE IF NOT EXISTS public.anyuser (
                 "uuid" uuid NOT NULL,
 	            "displayname" string NOT NULL,
             	CONSTRAINT anyuser_pk PRIMARY KEY ("uuid")
             );
         `);
 
-        this.cockroachClient.query(`
-            CREATE TABLE public.anyspace (
+        await this.cockroachClient.query(`
+            CREATE TABLE IF NOT EXISTS public.anyspace (
 	            "uuid" uuid NOT NULL,
 	            "owner" uuid NOT NULL,
             	CONSTRAINT anyspace_pk PRIMARY KEY ("uuid"),
@@ -56,8 +60,8 @@ export abstract class Model {
             );
         `);
 
-        this.cockroachClient.query(`
-            CREATE TABLE public.anyobject (
+        await this.cockroachClient.query(`
+            CREATE TABLE IF NOT EXISTS public.anyobject (
 	            "uuid" uuid NOT NULL,
             	"space" uuid NOT NULL,
             	"blob" bytes NOT NULL,
@@ -66,8 +70,8 @@ export abstract class Model {
             );
         `);
 
-        this.cockroachClient.query(`
-            CREATE TABLE public.space_user (
+        await this.cockroachClient.query(`
+            CREATE TABLE IF NOT EXISTS public.space_user (
 	            "space" uuid NOT NULL,
             	"member" uuid NOT NULL,
             	"create" bool NOT NULL,
