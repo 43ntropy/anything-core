@@ -1,5 +1,5 @@
 import { Client, Pool } from 'pg';
-import { CredentialsDeamon } from '../CredentialsDeamon';
+import { CredentialsDeamon } from '../CredentialsDaemon';
 
 /**
  * This class provide access to the database clients

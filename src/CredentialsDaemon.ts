@@ -1,4 +1,4 @@
-import { Daemon } from "./Deamon";
+import { Daemon } from "./Daemon";
 import fs from 'fs';
 
 export class CredentialsDeamon extends Daemon {

@@ -1,6 +1,6 @@
 import { mkdir } from "fs/promises";
-import { CockroachDaemon } from "./modules/CockroachDeamon";
-import { ModelDeamon } from "./modules/ModelDeamon";
+import { CockroachDaemon } from "./modules/CockroachDaemon";
+import { ModelDaemon } from "./modules/ModelDaemon";
 
 (async () => {
 
@@ -12,6 +12,6 @@ import { ModelDeamon } from "./modules/ModelDeamon";
 
     await CockroachDaemon.init("single");
 
-    await ModelDeamon.init();
+    await ModelDaemon.init();
     
 })();

@@ -3,7 +3,7 @@ import { Environment } from '../Enviroment';
 import { exit } from 'process';
 import { ChildProcess, exec, spawn } from 'child_process';
 import { promisify } from 'util';
-import { Daemon } from '../Deamon';
+import { Daemon } from '../Daemon';
 
 export class CockroachDaemon extends Daemon {
 

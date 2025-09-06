@@ -1,11 +1,11 @@
 import pg from 'pg';
-import { Daemon } from "../Deamon";
+import { Daemon } from "../Daemon";
 import { Model } from "../model/Model";
 import { readFileSync } from 'node:fs';
 
-export class ModelDeamon extends Daemon {
+export class ModelDaemon extends Daemon {
 
-    private static singleton: ModelDeamon;
+    private static singleton: ModelDaemon;
 
     private cockroachAdmin?: pg.Client;
     private cockroachClient?: pg.Pool;
@@ -28,10 +28,10 @@ export class ModelDeamon extends Daemon {
 
     }
 
-    public static async init(): Promise<ModelDeamon> {
+    public static async init(): Promise<ModelDaemon> {
 
-        if (ModelDeamon.singleton)
-            return ModelDeamon.singleton;
+        if (ModelDaemon.singleton)
+            return ModelDaemon.singleton;
         const instance = new this();
         await instance.setup();
         return instance;
