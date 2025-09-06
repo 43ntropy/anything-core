@@ -1,5 +1,6 @@
 describe('Testing tests!', () => {
   test('Hello, World!', () => {
-    expect(true).toBe(true);
+    let x: boolean = true;
+    expect(x).toBe(true);
   });
 });
