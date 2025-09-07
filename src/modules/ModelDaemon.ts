@@ -37,7 +37,7 @@ export class ModelDaemon extends Daemon {
         const client = admin; // ! Temporary for development
 
         await admin.connect();
-        // await client.connect(); // ! Temporary for development
+        await client.connect();
 
         await ModelAccess.getRefInit(admin, client);
 
