@@ -1,16 +1,16 @@
 import pg from 'pg';
-import { Daemon } from "../Daemon";
+import { Manager } from "../Manager";
 import { Model } from "../model/Model";
 import { readFileSync } from 'node:fs';
 
-export class ModelDaemon extends Daemon {
+export class ModelManager extends Manager {
 
-    private static singleton: ModelDaemon;
+    private static singleton: ModelManager;
 
     private cockroachAdmin: pg.Pool;
     private cockroachClient: pg.Pool;
 
-    public static async init(): Promise<ModelDaemon> {
+    public static async init(): Promise<ModelManager> {
 
         if (this.singleton)
             return this.singleton;

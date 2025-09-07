@@ -3,11 +3,11 @@ import { Environment } from '../Enviroment';
 import { exit } from 'process';
 import { ChildProcess, exec, spawn } from 'child_process';
 import { promisify } from 'util';
-import { Daemon } from '../Daemon';
+import { Manager as Manager } from '../Manager';
 
-export class CockroachDaemon extends Daemon {
+export class CockroachManager extends Manager {
 
-    private static singleton: CockroachDaemon;
+    private static singleton: CockroachManager;
 
     private process: ChildProcess | null = null;
 
@@ -18,15 +18,15 @@ export class CockroachDaemon extends Daemon {
 
     private constructor(mode: "single" | "cluster") {
         super();
-        if (CockroachDaemon.singleton) throw new Error("Daemon already instantiated");
-        CockroachDaemon.singleton = this;
+        if (CockroachManager.singleton) throw new Error("Manager already instantiated");
+        CockroachManager.singleton = this;
         this.mode = mode;
         setInterval(async () => {await this.monitor()}, 250);
     }
 
-    public static async init(mode: "single"): Promise<CockroachDaemon> {
-        if (CockroachDaemon.singleton)
-            return CockroachDaemon.singleton;
+    public static async init(mode: "single"): Promise<CockroachManager> {
+        if (CockroachManager.singleton)
+            return CockroachManager.singleton;
         const instance = new this(mode);
         await instance.setup();
         instance.startup();
@@ -203,25 +203,25 @@ export class CockroachDaemon extends Daemon {
         try {
             await fetch(`http://localhost:8080/health`);
             if (this.status != "running") {
-                Daemon.eventBus.emit("cockroach:running");
+                Manager.eventBus.emit("cockroach:running");
                 this.info(`CockroachDB is up and healthy.`);
             }
             this.status = "running";
         }
         catch (e) {
             if (this.status != "stopped")
-                Daemon.eventBus.emit("cockroach:stopped");
+                Manager.eventBus.emit("cockroach:stopped");
             this.status = "stopped";
         }
 
     }
 
     protected info(message: string): void {
-        console.info(`\x1b[35m[CockroachDaemon]\x1b[0m ${message}`);
+        console.info(`\x1b[35m[CockroachManager]\x1b[0m ${message}`);
     }
 
     protected error(message: string): void {
-        console.error(`\x1b[35m[CockroachDaemon]\x1b[0m \x1b[31m${message}\x1b[0m`);
+        console.error(`\x1b[35m[CockroachManager]\x1b[0m \x1b[31m${message}\x1b[0m`);
     }
 
 }

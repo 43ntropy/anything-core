@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { CredentialsDeamon } from '../CredentialsDaemon';
+import { CredentialsManager } from '../CredentialsManager';
 
 /**
  * This class provide access to the database clients
@@ -20,7 +20,7 @@ export abstract class Model {
         Model.cockroachAdmin = admin;
         Model.cockroachClient = client;
 
-        if (!CredentialsDeamon.isCockroachClientRootKeyEncrypted) {
+        if (!CredentialsManager.isCockroachClientRootKeyEncrypted) {
 
             // * AnyThing database & user are not created yet
 

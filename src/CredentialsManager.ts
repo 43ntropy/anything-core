@@ -1,7 +1,7 @@
-import { Daemon } from "./Daemon";
+import { Manager } from "./Manager";
 import fs from 'fs';
 
-export class CredentialsDeamon extends Daemon {
+export class CredentialsManager extends Manager {
 
     /**
      * Indicates whether the CockroachDB client root key is encrypted.
